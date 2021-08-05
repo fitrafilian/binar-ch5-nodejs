@@ -1,10 +1,16 @@
+// Core module
 const express = require("express");
+const app = express();
+
+// Third-party module
 const expressLayouts = require("express-ejs-layouts");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const { body, validationResult, check } = require("express-validator");
+
+// Local module
 const users = require("./utils/users");
-const app = express();
+const authTokens = require("./utils/auth-tokens");
 
 const port = 5000;
 
@@ -55,6 +61,7 @@ const getHashedPassword = (password) => {
 // Register
 app.post(
   "/register",
+  // Express validator
   [
     check("email", "Email is not valid").isEmail(),
     body("email").custom((value) => {
@@ -106,7 +113,8 @@ const generateAuthToken = () => {
 };
 
 // This will hold the users and authToken related to users
-const authTokens = {};
+const dataTokens = authTokens.loadFile();
+// const authTokens = {};
 
 app.post(
   "/login",
@@ -138,9 +146,14 @@ app.post(
 
     if (user) {
       const authToken = generateAuthToken();
+      const time = authTokens.getTime();
+      user.time = time;
 
       // Store authentication token
-      authTokens[authToken] = user;
+      // authTokens.addToken(authToken, user);
+      // dataTokens[authToken] = user;
+      dataTokens[authToken] = user;
+      authTokens.saveTokens(dataTokens);
 
       // Setting the auth token in cookies
       res.cookie("AuthToken", authToken);
@@ -162,7 +175,7 @@ app.use((req, res, next) => {
   const authToken = req.cookies["AuthToken"];
 
   // Inject the user to the request
-  req.user = authTokens[authToken];
+  req.user = dataTokens[authToken];
 
   next();
 });
@@ -199,10 +212,24 @@ app.get("/protected", requireAuth, (req, res) => {
   });
 });
 
-app.get("/aaa", (req, res) => {
-  res.send(authTokens);
+// track users data for development purpose
+app.get("/users", (req, res) => {
+  const data = users.loadFile();
+  res.send(data);
+});
+
+// track tokens data for development purpose
+app.get("/tokens", (req, res) => {
+  res.send(dataTokens);
+});
+
+app.get("/date", (req, res) => {
+  const date = authTokens.getDate();
+  res.send(date);
 });
 
 app.listen(port, () => {
   console.log(`Listening from port ${port}`);
 });
+
+// code adobted from https://stackabuse.com/handling-authentication-in-express-js

@@ -1,12 +1,12 @@
 const fs = require("fs");
 
-// Membuat folder data jika belum ada
+// Create folder data
 const dirPath = "./data";
 if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath);
 }
 
-// Membuat file user.js jika belum ada
+// Create file users.json
 const filePath = "./data/users.json";
 if (!fs.existsSync(filePath)) {
   fs.writeFileSync(filePath, "[]");
