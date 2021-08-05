@@ -30,11 +30,22 @@ const addUser = (user) => {
   saveUsers(users);
 };
 
-// cari contact berdasarkan email
+// find contact by email
 const findUser = (email) => {
   const users = loadFile();
   const user = users.find((user) => user.email.toLowerCase() == email.toLowerCase());
   return user;
 };
 
-module.exports = { addUser: addUser, findUser: findUser, loadFile: loadFile };
+// Check email exist
+const checkDuplicate = (email) => {
+  const users = loadFile();
+  return users.find((user) => user.email === email);
+};
+
+module.exports = {
+  addUser: addUser,
+  findUser: findUser,
+  loadFile: loadFile,
+  checkDuplicate: checkDuplicate,
+};

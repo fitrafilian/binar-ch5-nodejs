@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="css/signin.css" />
+<div class="container d-flex justify-content-center align-items-center">
+  <div class="row">
+    <div class="col box">
+      <h4>Welcome to Traditional Games</h4>
+      <h5>Login to play</h5>
+      <p>Please insert your email and password</p>
+      <% if (typeof errors != 'undefined') { %>
+      <div class="alert alert-danger" role="alert">
+        <ul class="mb-0">
+          <li><%= errors[0].msg %></li>
+        </ul>
+      </div>
+      <% } %>
+      <form method="POST" action="/login">
+        <div class="mb-3 form">
+          <input type="email" class="form-control" id="exampleInputEmail1" name="email" placeholder="Email address" aria-describedby="emailHelp" required />
+        </div>
+        <div class="mb-3 form">
+          <input type="password" class="form-control" id="exampleInputPassword1" name="password" placeholder="Password" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Sign In</button>
+        <div class="to-login d-flex align-items-center justify-content-center mt-3">
+          <p class="text-muted mb-0 me-2">Don't have an account?</p>
+          <a href="/register" class="fw-bold text-decoration-none">Register</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

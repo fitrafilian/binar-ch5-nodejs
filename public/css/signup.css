@@ -7,6 +7,10 @@ body {
   height: 100vh;
 }
 
+.container .alert {
+  padding: 2px;
+}
+
 .box {
   background-color: white;
   padding: 20px;
@@ -17,7 +21,7 @@ body {
 .wrapper input {
   background-color: transparent;
   border: none;
-  width: 300px;
+  width: 100%;
   outline: none;
   border-color: transparent;
 }
@@ -25,6 +29,10 @@ body {
 .wrapper .form {
   border-bottom: 2px solid #000;
 }
+
+/* .wrapper input .form .alert {
+  background-color: transparent !important;
+} */
 
 textarea:focus,
 textarea.form-control:focus,

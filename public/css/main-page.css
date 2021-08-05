@@ -2,6 +2,12 @@ body {
 	margin: 0;
 }
 
+main{
+	margin: 0;
+	width: 100%;
+	padding: 0;
+}
+
 /*section-1 start*/
 
 	#section-1 {
