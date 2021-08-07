@@ -242,7 +242,6 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-// development purpose
 app.get("/token", (req, res) => {
   res.send(dataTokens);
   res.send(req.token);
