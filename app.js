@@ -6,6 +6,7 @@ const app = express();
 const expressLayouts = require("express-ejs-layouts");
 const exphbs = require("express-handlebars");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const { body, validationResult, check } = require("express-validator");
 const session = require("express-session");
@@ -15,7 +16,9 @@ const flash = require("connect-flash");
 const users = require("./utils/users");
 const authTokens = require("./utils/auth-tokens");
 
-const port = 3100;
+const port = 5000;
+
+app.use(cors());
 
 // To support URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,6 +28,10 @@ app.use(cookieParser());
 
 // To make public folder
 app.use(express.static("public"));
+app.use("/user/", express.static("public"));
+app.use("/login", express.static("public"));
+app.use("/register", express.static("public"));
+app.use("/", express.static("public"));
 
 // EJS
 app.set("view engine", "ejs");
@@ -52,17 +59,17 @@ app.use(expressLayouts);
 // );
 // app.use(flash());
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.render("index", {
-    title: 'Traditional Games',
-    layout: 'layouts/main',
+    title: "Traditional Games",
+    layout: "layouts/main",
   });
 });
 
 app.get("/register", (req, res) => {
   res.render("register", {
-    title: 'Register',
-    layout: 'layouts/main',
+    title: "Register",
+    layout: "layouts/main",
   });
 });
 
@@ -74,42 +81,6 @@ const getHashedPassword = (password) => {
   const hash = sha256.update(password).digest("base64");
   return hash;
 };
-
-// app.post("/register", (req, res) => {
-//   const { email, firstName, lastName, password, confirmPassword } = req.body;
-
-//   // Check if the password and confirm password fields match
-//   if (password === confirmPassword) {
-//     // Check if user with the same email is also registered
-//     const file = users.loadFile()
-//     if (file.find((user) => user.email === email)) {
-//       res.render("register", {
-//         title: 'Register',
-//         message: "User already registered.",
-//         messageClass: "alert-danger",
-//       });
-
-//       return;
-//     }
-
-//     const hashedPassword = getHashedPassword(password);
-
-//     // Store user into the database if you are using one
-//     users.addUser({ email, firstName, lastName, password: hashedPassword });
-
-//     res.render("login", {
-//       title: 'Log In',
-//       message: "Registration Complete. Please login to continue.",
-//       messageClass: "alert-success",
-//     });
-//   } else {
-//     res.render("register", {
-//       title: 'Register',
-//       message: "Password does not match.",
-//       messageClass: "alert-danger",
-//     });
-//   }
-// });
 
 app.post(
   "/register",
@@ -124,7 +95,7 @@ app.post(
       return true;
     }),
     check("password", "Password at least 8 characters in length.").isLength({ min: 8 }),
-    check("confirmPassword", "Password at least 8 characters in length.").isLength({ min: 8 }),
+    // check("confirmPassword", "Password at least 8 characters in length.").isLength({ min: 8 }),
     body("confirmPassword").custom((value, { req }) => {
       if (value !== req.body.password) {
         throw new Error("Password confirmation does not match password");
@@ -138,7 +109,7 @@ app.post(
     const hashedPassword = getHashedPassword(password);
     if (!errors.isEmpty()) {
       res.render("register", {
-        layout: 'layouts/main',
+        layout: "layouts/main",
         title: "Register",
         errors: errors.array(),
       });
@@ -146,21 +117,20 @@ app.post(
       users.addUser({ email, firstName, lastName, password: hashedPassword });
       // req.flash("alert", "Account successfully created");
       res.render("login", {
-        layout: 'layouts/main',
+        layout: "layouts/main",
         title: "Log In",
         message: "Account successfully created",
         messageClass: "alert-success",
         // msg: req.flash("alert"),
       });
-      // res.redirect("/login");
     }
   }
 );
 
 app.get("/login", (req, res) => {
   res.render("login", {
-    layout: 'layouts/main',
-    title: 'Log In',
+    layout: "layouts/main",
+    title: "Log In",
   });
 });
 
@@ -169,7 +139,8 @@ const generateAuthToken = () => {
 };
 
 // This will hold the users and authToken related to users
-const dataTokens = authTokens.loadFile();
+// const dataTokens = authTokens.loadFile();
+const dataTokens = {};
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -187,17 +158,17 @@ app.post("/login", (req, res) => {
 
     // Store authentication token
     dataTokens[authToken] = user;
-    authTokens.saveTokens(dataTokens);
+    // authTokens.saveTokens(dataTokens);
 
     // Setting the auth token in cookies
-    res.cookie("AuthToken", authToken);
+    res.cookie("AuthToken", authToken, { expires: new Date(Date.now() + 900000) });
 
-    // Redirect user to the protected page
-    res.redirect("/protected");
+    // Redirect user to the user page
+    res.redirect("/user");
   } else {
     res.render("login", {
-      layout: 'layouts/main',
-      title: 'Log In',
+      layout: "layouts/main",
+      title: "Log In",
       message: "Invalid username or password",
       messageClass: "alert-danger",
     });
@@ -210,20 +181,27 @@ app.use((req, res, next) => {
 
   // Inject the user to the request
   req.user = dataTokens[authToken];
+  req.token = authToken;
 
   next();
 });
 
-app.get("/protected", (req, res) => {
+app.get("/user", (req, res) => {
   if (req.user) {
-    res.render("protected", {
-      layout: 'layouts/main',
-      title: 'Protected',
+    const dataUser = req.user;
+    res.setHeader("Content-Type", "text/html");
+    res.render("index", {
+      user: req.user,
+      token: req.token,
+      tokens: dataTokens,
+      layout: "layouts/main",
+      title: "Traditional Games",
     });
+    // console.log(req.user);
   } else {
     res.render("login", {
-      layout: 'layouts/main',
-      title: 'Log In',
+      layout: "layouts/main",
+      title: "Log In",
       message: "Please login to continue",
       messageClass: "alert-danger",
     });
@@ -235,19 +213,39 @@ const requireAuth = (req, res, next) => {
     next();
   } else {
     res.render("login", {
-      layout: 'layouts/main',
-      title: 'Log In',
+      layout: "layouts/main",
+      title: "Log In",
       message: "Please login to continue",
       messageClass: "alert-danger",
     });
   }
 };
 
-app.get("/protected", requireAuth, (req, res) => {
-  res.render("protected", {
-    layout: 'layouts/main',
-    title: 'Protected',
+app.get("/user", requireAuth, (req, res) => {
+  res.render("index", {
+    layout: "layouts/main",
+    title: "Traditional Games",
   });
+});
+
+app.get("/games", requireAuth, (req, res) => {
+  res.render("games", {
+    title: "Rock, Paper, Scissor",
+    layout: "layouts/main",
+    user: req.user,
+  });
+});
+
+app.get("/logout", (req, res) => {
+  const token = req.token;
+  delete dataTokens[token];
+  res.redirect("/");
+});
+
+// development purpose
+app.get("/token", (req, res) => {
+  res.send(dataTokens);
+  res.send(req.token);
 });
 
 app.listen(port, () => {
