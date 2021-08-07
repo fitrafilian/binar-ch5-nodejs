@@ -6,6 +6,7 @@ const app = express();
 const expressLayouts = require("express-ejs-layouts");
 const exphbs = require("express-handlebars");
 const cookieParser = require("cookie-parser");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const { body, validationResult, check } = require("express-validator");
 const session = require("express-session");
@@ -15,7 +16,9 @@ const flash = require("connect-flash");
 const users = require("./utils/users");
 const authTokens = require("./utils/auth-tokens");
 
-const port = 3100;
+const port = 3000;
+
+app.use(cors())
 
 // To support URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,6 +28,10 @@ app.use(cookieParser());
 
 // To make public folder
 app.use(express.static("public"));
+app.use("/user/", express.static("public"));
+app.use("/login", express.static("public"));
+app.use("/register", express.static("public"));
+app.use("/", express.static("public"));
 
 // EJS
 app.set("view engine", "ejs");
@@ -52,12 +59,19 @@ app.use(expressLayouts);
 // );
 // app.use(flash());
 
-app.get("/", function (req, res) {
+app.get("/", (req, res) => {
   res.render("index", {
     title: 'Traditional Games',
     layout: 'layouts/main',
   });
 });
+
+app.get('/games', (req, res) => {
+  res.render('games', {
+    title: 'Rock, Paper, Scissor',
+    layout: 'layouts/main',
+  })
+})
 
 app.get("/register", (req, res) => {
   res.render("register", {
@@ -74,42 +88,6 @@ const getHashedPassword = (password) => {
   const hash = sha256.update(password).digest("base64");
   return hash;
 };
-
-// app.post("/register", (req, res) => {
-//   const { email, firstName, lastName, password, confirmPassword } = req.body;
-
-//   // Check if the password and confirm password fields match
-//   if (password === confirmPassword) {
-//     // Check if user with the same email is also registered
-//     const file = users.loadFile()
-//     if (file.find((user) => user.email === email)) {
-//       res.render("register", {
-//         title: 'Register',
-//         message: "User already registered.",
-//         messageClass: "alert-danger",
-//       });
-
-//       return;
-//     }
-
-//     const hashedPassword = getHashedPassword(password);
-
-//     // Store user into the database if you are using one
-//     users.addUser({ email, firstName, lastName, password: hashedPassword });
-
-//     res.render("login", {
-//       title: 'Log In',
-//       message: "Registration Complete. Please login to continue.",
-//       messageClass: "alert-success",
-//     });
-//   } else {
-//     res.render("register", {
-//       title: 'Register',
-//       message: "Password does not match.",
-//       messageClass: "alert-danger",
-//     });
-//   }
-// });
 
 app.post(
   "/register",
@@ -152,7 +130,6 @@ app.post(
         messageClass: "alert-success",
         // msg: req.flash("alert"),
       });
-      // res.redirect("/login");
     }
   }
 );
@@ -192,8 +169,8 @@ app.post("/login", (req, res) => {
     // Setting the auth token in cookies
     res.cookie("AuthToken", authToken);
 
-    // Redirect user to the protected page
-    res.redirect("/protected");
+    // Redirect user to the user page
+    res.redirect("/user");
   } else {
     res.render("login", {
       layout: 'layouts/main',
@@ -214,11 +191,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/protected", (req, res) => {
+app.get("/user", (req, res) => {
   if (req.user) {
-    res.render("protected", {
+    const dataUser = req.user
+    res.setHeader("Content-Type", "text/html")
+    res.render("index", {
+      user: req.user,
       layout: 'layouts/main',
-      title: 'Protected',
+      title: 'Traditional Games',
     });
   } else {
     res.render("login", {
@@ -243,10 +223,10 @@ const requireAuth = (req, res, next) => {
   }
 };
 
-app.get("/protected", requireAuth, (req, res) => {
-  res.render("protected", {
+app.get("/user", requireAuth, (req, res) => {
+  res.render("index", {
     layout: 'layouts/main',
-    title: 'Protected',
+    title: 'Traditional Games',
   });
 });
 
