@@ -1,6 +1,1 @@
-[
-  { "email": "fitra@gmail.com", "firstName": "Fitra", "lastName": "Filian", "password": "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=" },
-  { "email": "radit@gmail.com", "firstName": "Raditya", "lastName": "Fajri", "password": "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=" },
-  { "email": "balqis@gmail.com", "firstName": "Balqis", "lastName": "Shafira", "password": "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=" },
-  { "email": "dzaky@gmail.com", "firstName": "Dzaky", "lastName": "Filian", "password": "XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg=" }
-]
+[{"email":"fitra@gmail.com","firstName":"Fitra","lastName":"Filian","password":"XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg="},{"email":"radit@gmail.com","firstName":"Raditya","lastName":"Fajri","password":"XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg="},{"email":"balqis@gmail.com","firstName":"Balqis","lastName":"Shafira","password":"XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg="},{"email":"dzaky@gmail.com","firstName":"Dzaky","lastName":"Filian","password":"XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg="},{"email":"daris@gmail.com","firstName":"Daris","lastName":"Filian","password":"XohImNooBHFR0OVvjcYpJ3NgPQ1qq73WKhHvch0VQtg="}]

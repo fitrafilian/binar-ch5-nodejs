@@ -6,11 +6,14 @@
       <h5>Create account</h5>
       <p class="text-muted">Please insert your personal information</p>
       <% if (typeof message != 'undefined') { %>
-      <div class="alert <%= messageClass %>" style="padding: 0px !important; width: 100% !important" role="alert"><%= message %></div>
+      <div class="alert <%= messageClass %>" role="alert"><%= message %></div>
       <% } %> <% if (typeof errors != 'undefined') { %>
-      <div class="alert alert-danger" role="alert">
-        <% errors.forEach(error => { %> <%= error.msg %><br />
-        <% }) %>
+      <div class="alert alert-danger" style="padding: 5px 0 !important; width: 100% !important" role="alert">
+        <ul class="m-0">
+          <% errors.forEach(error => { %>
+          <li><%= error.msg %></li>
+          <% }) %>
+        </ul>
       </div>
       <% } %>
       <form method="post" action="/register">

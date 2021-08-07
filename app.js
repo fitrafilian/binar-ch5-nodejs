@@ -4,13 +4,10 @@ const app = express();
 
 // Third-party module
 const expressLayouts = require("express-ejs-layouts");
-const exphbs = require("express-handlebars");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const { body, validationResult, check } = require("express-validator");
-const session = require("express-session");
-const flash = require("connect-flash");
 
 // Local module
 const users = require("./utils/users");
@@ -36,28 +33,6 @@ app.use("/", express.static("public"));
 // EJS
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-
-// // HBS
-// app.engine(
-//   "hbs",
-//   exphbs({
-//     extname: ".hbs",
-//   })
-// );
-
-// app.set("view engine", "hbs");
-
-// Flash configuration
-// app.use(cookieParser("keyboard cat"));
-// app.use(
-//   session({
-//     cookie: { maxAge: 60000 },
-//     secret: "secret",
-//     resave: true,
-//     saveUninitialized: true,
-//   })
-// );
-// app.use(flash());
 
 app.get("/", (req, res) => {
   res.render("index", {
@@ -115,13 +90,11 @@ app.post(
       });
     } else {
       users.addUser({ email, firstName, lastName, password: hashedPassword });
-      // req.flash("alert", "Account successfully created");
       res.render("login", {
         layout: "layouts/main",
         title: "Log In",
         message: "Account successfully created",
         messageClass: "alert-success",
-        // msg: req.flash("alert"),
       });
     }
   }
@@ -242,6 +215,8 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
+//
+// route for development purpose
 app.get("/token", (req, res) => {
   res.send(dataTokens);
   res.send(req.token);
