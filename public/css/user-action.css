@@ -1,0 +1,68 @@
+body,
+.container {
+  /* background-color: #eaeaea; */
+  width: 100%;
+  height: 100vh;
+  background-color: #9c835f;
+}
+
+.box {
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 8px 0.01px #a06000;
+  width: 350px;
+}
+
+input {
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  outline: none;
+  border-color: transparent;
+  color: #ffb548;
+  font-weight: bold;
+  font-family: Open Sans, sans-serif;
+}
+
+input:focus {
+  border-color: #ffb548 !important;
+  box-shadow: 0 0 5px #ffb548 !important;
+  color: white;
+}
+
+form {
+  width: 100%;
+}
+
+form button,
+form button:focus {
+  background-color: #ffb548 !important;
+  color: black !important;
+  font-family: Open Sans, sans-serif;
+  font-weight: bold;
+  border: none !important;
+}
+
+form button:hover {
+  box-shadow: 0px 0px 2px #f59300;
+}
+
+.to-login a {
+  color: #ffb548;
+}
+
+textarea:focus,
+textarea.form-control:focus,
+input.form-control:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+[type="text"].form-control:focus,
+[type="password"].form-control:focus,
+[type="email"].form-control:focus,
+[type="tel"].form-control:focus,
+[contenteditable].form-control:focus {
+  /* box-shadow: inset 0 -1px 0 #ddd; */
+}
